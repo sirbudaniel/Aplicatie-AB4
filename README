@@ -1,0 +1,56 @@
+Sirbu Daniel-Ilie
+
+In realizarea programului am considerat urmatoarele aspecte:
+1. Datele citite din fisier despre hoteluri sunt introduse corect
+2. Datele de la utilizator sunt introduse corect
+3. Formatul datelor de input este 
+Tip_Locatie,Tara,Regiune,Locatie,Pret,Lista_Activiti,Data_Inceput_Oferta,Data_Final_Oferta
+unde Tip_Locatie este Oras in cazul de fata, dar am folosit tipul asta de 
+abordare deoarece pentru extinderea functionalitatii pentru Sate si Comune nu va 
+trebui decat sa se creeze clase care sa extinda clasa abstracta Locatie si sa implementeze
+toate acele metode abstracte si in momentul adaugarii unei noi locatii sa se creeze
+un obiect de tipul Sat sau Comuna in loc de oras(unde am comentat else if-ul in fisierul
+Database) conform primului String citit din linia fisierului cu baza de date(Oras,Sat,Comuna)
+4. Perioadele ofertelor hotelurilor sunt destul de mari astfel incat cautarea unui sejur normal
+sa se afle in cazul in care se poate fie in totalitate in interiorul unei oferte, fie cel mult 
+in doua oferte, finalul primeia fiind exact in ziua inceperii celei de a doua. Am adaugat un 
+astfel de exemplu in cazul hotelului Dunavis si a testului cu cautarea de pe 24/09 pe 26/09
+care se compune din doua oferte diferite.
+
+Am folosit o structura ierarhica in care baza de date contine un HashMap de tari, tarile contin
+cate un HashMap de regiuni, regiunile contin cate un HashMap de localitati, hotelurile contin 
+cate un HashMap de activitati, iar cheile din HashMap reprezinta numele obiectelor continute, tocmai
+pentru a eficientiza cautarea unui anumit obiect si inserarea lui(get si put se fac in O(1)).
+De asemenea inserarea a mai multor oferte cu perioade pentru o anumita activitate am folosit 
+o coada de prioritati cu un comparator care introduce perioadele in mod ordonat crescator dupa
+pretul lor, tocmai pentru ca atunci cand se doreste cautarea unei anumite activitati cu pretul
+cel mai mic, sa nu mai fie necesara parcurgerea intregii liste de oferte, ci extragerea simpla
+a primului element din coada.
+
+Cele 3 operatii au fost implementate astfel:
+1. toate informatiile despre locatia X: se alege operatia 1, se introduc datele
+corespunzatoare tarii, regiunii si localitatii si se cauta acea locatie in HashMap-uri
+si se afiseaza toate datele despre ea.
+2. top5 locatii pentru o anumita perioada. dupa alegerae operatiei 2 si a tipului 
+de cautare 1 pentru tara, 2 pentru tara si regiune si 3 pentru tara regiune si 
+localitate, se introduc aceste date, apoi datele perioadei de cautare si 
+se adauga intr-un PriorityQueue toate hotelurile care corespund cererii ordonate
+crescator dupa pretul pe intreg sejurul cerut, urmand ca in final doar sa se 
+extraga primele 5 elemente din coada de prioritati, sau mai putine daca nu exista
+chiar 5 si sa se afiseze datele despre ele.
+3. cea mai buna locatie pentru a practica o activitate 10 zile. La fel se parcurg
+toate hotelurile din baza de date si pentru toate ofertele mai mari de 10 zile
+si care au ca activitate pe cea ceruta se adauga acele elemente in PriorityQueue-ul
+rezultat tot ordonat in functie de pretul pe zi, urmand ca in final cea mai buna
+oferta sa fie reprezentata de primul element din coada, fiind nevoie doar sa se
+extraga si sa se afiseze informatia corespunzatoare.
+
+In cazul in care se compileaza in linux se poate folosi makefile-ul din folderul src cu comanda
+make build pentru compilare si make clean pentru stergerea fisierelor.class dupa executie
+
+Rularea se poate face din folderul src in linux in felul urmator
+java Main ../DB.in
+urmand ca apoi sa se introduca in terminal cate o comanda pe rand din fisierul de test stdin.in
+sau in NetBeans
+
+De asemenea am adaugat un fisier pentru baza de date DB.in
